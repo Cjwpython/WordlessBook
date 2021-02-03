@@ -61,7 +61,7 @@ def test():
     namespce_name = "123123"
     app.add_url_rule(f"/{namespce_name}", view_func=test, methods=('GET',))
     return "12312312"
-
+print(123123)
 
 if __name__ == '__main__':
     print(app.url_map)
