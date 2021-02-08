@@ -1,5 +1,5 @@
 # coding: utf-8
-from db import mongo_cli, create_collection
+from utils.db import mongo_cli, create_collection
 
 mongo_cli.drop_database("namespaces")
 mongo_cli.drop_database("apps")
