@@ -7,4 +7,5 @@ def register_url(app):
     :return:
     """
     from views.test import urls  # 注册测试视图的路由
-    from views.namespaces import urls  # 注册测试视图的路由
+    from views.namespaces import urls  # 注册命名空间视图的路由
+    from views.env import urls  # 注册环境视图的路由

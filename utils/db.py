@@ -18,6 +18,8 @@ class MongoClientSingleton(object):
 mongo_cli = MongoClientSingleton()
 
 namespaces_db = mongo_cli["namespaces"]
+envs_db = mongo_cli["envs"]
+apps_db = mongo_cli["apps"]
 
 
 def check_db_exist(db_name=None):
