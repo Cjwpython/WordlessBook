@@ -46,25 +46,29 @@ class Namespace(views.MethodView):
 
     def post(self):
         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        name = request.json.get("name")
+        _namespace = namespaces_db.namespaces.find_one({"name": name})
+        if _namespace:
+            return jsonify({"code": 400, "message": f"{name}命名空间已存在"}), 400
         namespace = {
             "_id": str(uuid.uuid4()),
-            "name": request.json.get("name"),
+            "name": name,
             "nick_name": request.json.get("nick_name"),
             "create_time": now_time,
             "update_time": now_time
         }
+
         namespaces_db.namespaces.insert_one(namespace)
         return jsonify({"code": 201, "message": "创建成功"}), 201
 
     def put(self):
         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         namespace_id = request.json.get("namespace_id")
-        name = request.json.get("name")
         nick_name = request.json.get("nick_name")
         namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
         if not namespace:
             return jsonify({"code": 400, "message": "命名空间不存在"}), 400
-        namespaces_db.namespaces.update({"_id": namespace_id}, {"$set": {"name": name, "nick_name": nick_name, "update_time": now_time}}, upsert=True)
+        namespaces_db.namespaces.update({"_id": namespace_id}, {"$set": {"nick_name": nick_name, "update_time": now_time}}, upsert=True)
         return jsonify({"code": 200, "message": "更新成功"}), 200
 
     def delete(self):
