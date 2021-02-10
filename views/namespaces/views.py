@@ -4,9 +4,13 @@ import uuid
 from pprint import pprint
 
 from flask import jsonify, views, request
+from jsonschema import validate, ValidationError
 
 from utils.db import namespaces_db
 import logging
+
+from utils.errors import ParameterError
+from views.namespaces.validate import create_namespaces_validate, update_namespaces_validate, delete_namespaces_validate
 
 logging.getLogger("test.views")
 
@@ -31,7 +35,7 @@ def get_list_namespaces():
     data["current_page"] = current_page
     data["current_max_row"] = current_max_row
     data["sort_type"] = sort_type
-    return jsonify({"data": data}), 200
+    return jsonify({"data": data, "status_code": 200}), 200
 
 
 def get_single_namespace(namespace_id):
@@ -39,42 +43,57 @@ def get_single_namespace(namespace_id):
     namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
     if namespace:
         data.append(namespace)
-    return jsonify({"data": data}), 200
+    return jsonify({"data": data, "status_code": 200}), 200
 
 
 class Namespace(views.MethodView):
 
     def post(self):
+        try:
+            data = request.json
+            validate(instance=data, schema=create_namespaces_validate)
+        except ValidationError as e:
+            raise ParameterError(e.message)  # 重新定义错误返回格式
         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        name = request.json.get("name")
+        name = data["name"]
         _namespace = namespaces_db.namespaces.find_one({"name": name})
         if _namespace:
-            return jsonify({"code": 400, "message": f"{name}命名空间已存在"}), 400
+            return jsonify({"status_code": 400, "message": f"{name}命名空间已存在"}), 400
         namespace = {
             "_id": str(uuid.uuid4()),
             "name": name,
-            "nick_name": request.json.get("nick_name"),
+            "nick_name": data["nick_name"],
             "create_time": now_time,
             "update_time": now_time
         }
 
         namespaces_db.namespaces.insert_one(namespace)
-        return jsonify({"code": 201, "message": "创建成功"}), 201
+        return jsonify({"status_code": 201, "message": "创建成功"}), 201
 
     def put(self):
+        try:
+            data = request.json
+            validate(instance=data, schema=update_namespaces_validate)
+        except ValidationError as e:
+            raise ParameterError(e.message)
         now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        namespace_id = request.json.get("namespace_id")
-        nick_name = request.json.get("nick_name")
+        namespace_id = data["namespace_id"]
+        nick_name = data["nick_name"]
         namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
         if not namespace:
-            return jsonify({"code": 400, "message": "命名空间不存在"}), 400
+            return jsonify({"status_code": 400, "message": "命名空间不存在"}), 400
         namespaces_db.namespaces.update({"_id": namespace_id}, {"$set": {"nick_name": nick_name, "update_time": now_time}}, upsert=True)
-        return jsonify({"code": 200, "message": "更新成功"}), 200
+        return jsonify({"status_code": 200, "message": "更新成功"}), 200
 
     def delete(self):
-        namespace_id = request.json.get("namespace_id")
+        try:
+            data = request.json
+            validate(instance=data, schema=delete_namespaces_validate)
+        except ValidationError as e:
+            raise ParameterError(e.message)
+        namespace_id = data["namespace_id"]
         namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
         if not namespace:
-            return jsonify({"code": 400, "message": "命名空间不存在"}), 400
+            return jsonify({"status_code": 400, "message": "命名空间不存在"}), 400
         namespaces_db.namespaces.delete_one({"_id": namespace_id})
-        return jsonify({"code": 200, "message": "删除成功"}), 200
+        return jsonify({"status_code": 200, "message": "删除成功"}), 200
