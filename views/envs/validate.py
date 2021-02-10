@@ -1,27 +1,28 @@
 # coding: utf-8
 
-create_namespace_validate = {
+create_env_validate = {
     "type": "object", "properties": {
         "name": {"type": "string"},
-        "nick_name": {"type": "string"}
+        "nick_name": {"type": "string"},
+        "namespace_id": {"type": "string"}
     },
-    "required": ["name", "nick_name"],
+    "required": ["name", "nick_name", "namespace_id"],
     "additionalProperties": False  # 不接受规定以外的数个传入，True 除了必传的参数外，接受其他参数的传入
 }
 
-update_namespace_validate = {
+update_env_validate = {
     "type": "object", "properties": {
-        "namespace_id": {"type": "string"},
+        "env_id": {"type": "string"},
         "nick_name": {"type": "string"}
     },
-    "required": ["namespace_id", "nick_name"],
+    "required": ["env_id", "nick_name"],
     "additionalProperties": False
 }
 
-delete_namespace_validate = {
+delete_env_validate = {
     "type": "object", "properties": {
-        "namespace_id": {"type": "string"}
+        "env_id": {"type": "string"}
     },
-    "required": ["namespace_id"],
+    "required": ["env_id"],
     "additionalProperties": False
 }
