@@ -19,12 +19,12 @@ def get_list_namespaces():
     current_page = params.get("current_page", 1)
     current_max_row = params.get("current_max_row", 15)
     sort_type = params.get("sort_type", "update_time")
-    skip = (current_page - 1) * current_max_row
+    skip = (int(current_page) - 1) * int(current_max_row)
     if sort_type not in ["create_time", "update_time"]:
         sort_type = "create_time"
     namespaces = namespaces_db.namespaces.find(
         {},
-        {"name": 1, "nick_name": 1}).sort(sort_type, -1).skip(skip).limit(current_max_row)  # 只返回名称和昵称
+        {"name": 1, "nick_name": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
     for namespace in namespaces:
         data["namespaces"].append(namespace)
     data["max_count"] = max_count
