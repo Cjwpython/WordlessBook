@@ -4,7 +4,7 @@ from middleware.validate import check_date
 from utils.db import namespaces_db
 import logging
 
-from views.namespaces.services import create_namespace, update_namespace, check_namespaces_exist_by_name, check_namespaces_exist_by_id
+from views.namespaces.services import create_namespace, update_namespace, check_namespaces_exist_by_name, check_namespaces_exist_by_id, delete_namespace
 from views.namespaces.validate import create_namespace_validate, update_namespace_validate, delete_namespace_validate
 
 logging.getLogger("test.views")
@@ -59,4 +59,5 @@ class Namespace(views.MethodView):
     def delete(self):
         data = request.json
         check_namespaces_exist_by_id(id=data["namespace_id"], raise_exist=False)
+        delete_namespace(data)
         return jsonify({"status_code": 200, "message": "删除成功"}), 200

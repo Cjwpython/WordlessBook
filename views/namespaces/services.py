@@ -4,6 +4,7 @@ import datetime
 
 from utils.db import namespaces_db
 from utils.errors import NamespaceExist, NamespaceNotExist
+from views.envs.services import delete_env
 
 
 def create_namespace(data):
@@ -46,6 +47,12 @@ def update_namespace(data):
 
 def delete_namespace(data):
     namespace_id = data["namespace_id"]
+    envs = namespaces_db.namespaces.find_one({"_id": namespace_id})  # 获取所有的环境
+    print(envs)
+    for env in envs["envs"]:
+        print(env)
+        print(env["_id"])
+        delete_env(env["_id"])  # 删除所有的环境
     namespaces_db.namespaces.delete_one({"_id": namespace_id})
 
 
