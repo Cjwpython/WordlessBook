@@ -8,8 +8,9 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import create_env, check_namespaces_exist
+from views.envs.services import create_env, check_namespce_exist_env
 from views.envs.validate import create_env_validate
+from views.namespaces.services import check_namespaces_exist_by_name, check_namespaces_exist_by_id
 
 logging.getLogger("test.views")
 
@@ -34,9 +35,8 @@ class Env(views.MethodView):
     @check_date(schema=create_env_validate)
     def post(self):
         data = request.json
-        # 判断命令空间中是否存在这个环境名称
-        check_namespaces_exist(data["name"])
-        # 添加一个环境
+        check_namespaces_exist_by_id(id=data["namespace_id"], raise_exist=False)
+        check_namespce_exist_env(namespace_id=data["namespace_id"], env_name=data["name"])
         env_id = create_env(data)
         return jsonify({"code": 201, "message": f"{env_id}创建成功"}), 201
 

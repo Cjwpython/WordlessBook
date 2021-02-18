@@ -13,7 +13,8 @@ def create_namespace(data):
         "name": data["name"],
         "nick_name": data["nick_name"],
         "create_time": now_time,
-        "update_time": now_time
+        "update_time": now_time,
+        "envs": {}
     }
 
     namespaces_db.namespaces.insert_one(namespace)

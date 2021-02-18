@@ -1,8 +1,4 @@
 # coding: utf-8
-
-import uuid
-from pprint import pprint
-
 from flask import jsonify, views, request
 from middleware.validate import check_date
 from utils.db import namespaces_db
@@ -39,11 +35,9 @@ def get_list_namespaces():
 
 
 def get_single_namespace(namespace_id):
-    data = []
+    check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
     namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
-    if namespace:
-        data.append(namespace)
-    return jsonify({"data": data, "status_code": 200}), 200
+    return jsonify({"data": namespace, "status_code": 200}), 200
 
 
 class Namespace(views.MethodView):
