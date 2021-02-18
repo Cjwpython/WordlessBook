@@ -3,7 +3,7 @@ import datetime
 import uuid
 
 from utils.db import envs_db, namespaces_db
-from utils.errors import EnvExist
+from utils.errors import EnvExist, NameSpaceExistEnv, EnvNotExist
 
 
 def create_env(data):
@@ -17,10 +17,12 @@ def create_env(data):
     }
     envs_db.envs.insert_one(env)
     # namespace中插入数据
-    env_data = {
-        env["_id"]: env
-    }
-    namespaces_db.namespaces.update({"_id": data["namespace_id"]}, {"$set": {"envs": env_data, "update_time": now_time}})
+    namespaces_db.namespaces.update(
+        {"_id": data["namespace_id"]},
+        {
+            "$addToSet": {"envs": env},
+            "$set": {"update_time": now_time}}
+    )
     return env["_id"]
 
 
@@ -31,4 +33,12 @@ def check_namespce_exist_env(namespace_id, env_name):
         return
     if namespace_id == env["namespace_id"]:
         # 存在的命名空间中，namespace_id 和新创建的环境的namespace_id 相同，说明命名空间下这个环境已经创建
+        raise NameSpaceExistEnv
+
+
+def check_env_exist_by_id(env_id, raise_exist=True):
+    env = envs_db.envs.find_one({"_id": env_id})
+    if env and raise_exist:
         raise EnvExist
+    if not env and not raise_exist:
+        raise EnvNotExist

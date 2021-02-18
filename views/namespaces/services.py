@@ -14,7 +14,7 @@ def create_namespace(data):
         "nick_name": data["nick_name"],
         "create_time": now_time,
         "update_time": now_time,
-        "envs": {}
+        "envs": []
     }
 
     namespaces_db.namespaces.insert_one(namespace)
@@ -47,3 +47,9 @@ def update_namespace(data):
 def delete_namespace(data):
     namespace_id = data["namespace_id"]
     namespaces_db.namespaces.delete_one({"_id": namespace_id})
+
+
+def get_namespace_name(namespace_id):
+    print(namespace_id)
+    namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
+    return namespace["name"]

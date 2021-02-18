@@ -31,9 +31,30 @@ class NamespaceNotExist(BaseError):
         if error_msg:
             self.error_msg = error_msg
 
-class EnvExist(BaseError):
+
+class NameSpaceExistEnv(BaseError):
     error_id = "ENV_ERROR"
     error_message = "命名空间下已存在该环境"
+    status_code = 400
+
+    def __init__(self, error_msg=None):
+        if error_msg:
+            self.error_msg = error_msg
+
+
+class EnvExist(BaseError):
+    error_id = "ENV_ERROR"
+    error_message = "环境已经存在"
+    status_code = 400
+
+    def __init__(self, error_msg=None):
+        if error_msg:
+            self.error_msg = error_msg
+
+
+class EnvNotExist(BaseError):
+    error_id = "ENV_ERROR"
+    error_message = "环境不存在"
     status_code = 400
 
     def __init__(self, error_msg=None):

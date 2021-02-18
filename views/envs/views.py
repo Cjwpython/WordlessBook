@@ -8,9 +8,9 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import create_env, check_namespce_exist_env
+from views.envs.services import create_env, check_namespce_exist_env, check_env_exist_by_id
 from views.envs.validate import create_env_validate
-from views.namespaces.services import check_namespaces_exist_by_name, check_namespaces_exist_by_id
+from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name
 
 logging.getLogger("test.views")
 
@@ -24,11 +24,11 @@ def get_all_envs():
 
 
 def get_single_env(env_id):
-    data = []
+    check_env_exist_by_id(env_id=env_id, raise_exist=False)
     env = envs_db.envs.find_one({"_id": env_id})
-    if env:
-        data.append(env)
-    return jsonify({"data": data}), 200
+    namespace_name = get_namespace_name(namespace_id=env["namespace_id"])
+    env["namespace_name"] = namespace_name
+    return jsonify({"data": env}), 200
 
 
 class Env(views.MethodView):
@@ -44,6 +44,7 @@ class Env(views.MethodView):
         env_id = request.json.get("env_id")
         name = request.json.get("name")
         nick_name = request.json.get("nick_name")
+        check_env_exist_by_id(env_id=env_id, raise_exist=False)
         env = envs_db.envs.find_one({"_id": env_id})
         if not env:
             return jsonify({"code": 400, "message": "环境不存在"}), 400
