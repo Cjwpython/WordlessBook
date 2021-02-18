@@ -21,7 +21,7 @@ def get_list_namespaces():
     sort_type = params.get("sort_type", "update_time")
     skip = (int(current_page) - 1) * int(current_max_row)
     if sort_type not in ["create_time", "update_time"]:
-        sort_type = "create_time"
+        sort_type = "update_time"
     namespaces = namespaces_db.namespaces.find(
         {},
         {"name": 1, "nick_name": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
