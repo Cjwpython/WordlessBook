@@ -19,7 +19,7 @@ mongo_cli = MongoClientSingleton()
 
 namespaces_db = mongo_cli["namespaces"]
 envs_db = mongo_cli["envs"]
-apps_db = mongo_cli["apps"]
+apps_db = mongo_cli["applications"]
 
 
 def check_db_exist(db_name=None):

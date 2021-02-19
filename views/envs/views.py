@@ -8,7 +8,7 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id
+from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, namespace_add_new_env
 from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, change_env_namespace_validate
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
@@ -101,4 +101,5 @@ def env_change_namespcae():
     check_namespce_exist_env(namespace_id=namespace_id, env_name=env_name)
     namespace_delete_env(namespace_id=current_namespace_id, env_id=env_id)
     update_env_namespace_id(env_id, namespace_id=namespace_id)
+    namespace_add_new_env(namespace_id=namespace_id, env_id=env_id)
     return jsonify({"code": 200, "message": "修改成功"}), 200

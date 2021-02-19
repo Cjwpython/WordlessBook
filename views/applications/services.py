@@ -2,14 +2,14 @@
 import datetime
 import uuid
 
-from utils.db import envs_db, namespaces_db
+from utils.db import envs_db, namespaces_db, apps_db
 from utils.errors import EnvExist, NameSpaceExistEnv, EnvNotExist
 
 
-def create_env(data):
+def create_application(data):
     now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # 创建一个环境
-    init = {
+    app = {
         "_id": str(uuid.uuid4()),
         "name": data["name"],
         "nick_name": data["nick_name"],
@@ -18,15 +18,20 @@ def create_env(data):
         "create_time": now_time,
         "update_time": now_time,
     }
-    envs_db.envs.insert_one(init)
-    # namespace中插入数据
-    namespaces_db.namespaces.update(
-        {"_id": data["namespace_id"]},
+    apps_db.apps.insert_one(app)
+    # env中插入数据
+    env_add_application(env_id=data["env_id"], application_id=data["_id"])
+    return app["_id"]
+
+
+def env_add_application(env_id=None, application_id=None):
+    now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    envs_db.envs.update(
+        {"_id": env_id},
         {
-            "$addToSet": {"envs": init},
+            "$addToSet": {"envs": application_id},
             "$set": {"update_time": now_time}}
     )
-    return init["_id"]
 
 
 def check_namespce_exist_env(namespace_id, env_name):

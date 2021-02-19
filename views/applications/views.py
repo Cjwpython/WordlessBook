@@ -8,8 +8,9 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
+from views.applications.services import create_application
 from views.applications.validate import create_app_validate
-from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_app
+from views.envs.services import check_namespce_exist_env, check_env_exist_by_id
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name
 
 logging.getLogger("test.views")
@@ -35,31 +36,15 @@ class Applications(views.MethodView):
     @check_date(schema=create_app_validate)
     def post(self):
         data = request.json
-        # 判断命名空间存在性
         check_namespaces_exist_by_id(id=data["namespace_id"], raise_exist=False)
-        # 判断环境存在性
         check_env_exist_by_id(env_id=data["env_id"], raise_exist=False)
-        # 判断环境和命令空间的关联性
         env = envs_db.envs.find_one({"_id": data["env_id"]})
-        check_namespce_exist_env(namespace_id=data["namespace_id"], env_name=env["name"])
-        env_id = create_app(data)
+        check_namespce_exist_env(namespace_id=data["namespace_id"], env_name=env["name"], raise_exist=False)
+        env_id = create_application(data)
         return jsonify({"code": 201, "message": f"{env_id}创建成功"}), 201
 
     def put(self):
-        env_id = request.json.get("env_id")
-        name = request.json.get("name")
-        nick_name = request.json.get("nick_name")
-        check_env_exist_by_id(env_id=env_id, raise_exist=False)
-        env = envs_db.envs.find_one({"_id": env_id})
-        if not env:
-            return jsonify({"code": 400, "message": "环境不存在"}), 400
-        envs_db.envs.update({"_id": env_id}, {"name": name, "nick_name": nick_name})
-        return jsonify({"code": 200, "message": "更新成功"}), 200
+        pass
 
     def delete(self):
-        env_id = request.json.get("env_id")
-        env = envs_db.envs.find_one({"_id": envs_db})
-        if not env:
-            return jsonify({"code": 400, "message": "环境不存在"}), 400
-        envs_db.envs.delete_one({"_id": env_id})
-        return jsonify({"code": 200, "message": "删除成功"}), 200
+        pass
