@@ -92,8 +92,8 @@ def env_change_namespcae():
     current_namespace_id = data["current_namespace_id"]
     check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
     check_namespaces_exist_by_id(id=current_namespace_id, raise_exist=False)
-    check_env_exist_by_id(env_id=env_id, raise_exist=False)
-    check_namespce_exist_env_by_id(namespace_id=namespace_id, env_id=env_id)
+    env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
+    check_namespce_exist_env_by_id(namespace_id=namespace_id, env_id=env_id, env_name=env["name"])
     namespace_delete_env(namespace_id=current_namespace_id, env_id=env_id)
     update_env_namespace_id(env_id, namespace_id=namespace_id)
     namespace_add_env(namespace_id=namespace_id, env_id=env_id)
