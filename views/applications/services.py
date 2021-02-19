@@ -51,6 +51,10 @@ def check_env_exist_application(env_id, application_name, raise_exist=True):
             raise ApplicationExist
 
 
+def delete_application(appliction_id):
+    apps_db.apps.delete_one({"_id": appliction_id})
+
+
 def env_delete_application(env_id=None, application_id=None):
     now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     env = envs_db.envs.find_one({"_id": env_id})
@@ -60,4 +64,3 @@ def env_delete_application(env_id=None, application_id=None):
     except Exception as e:
         pass
     envs_db.envs.update({"_id": env_id}, {"$set": {"apps": apps, "update_time": now_time}}, upsert=True)
-

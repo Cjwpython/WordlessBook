@@ -54,7 +54,7 @@ def get_all_applications():
 def get_single_applications(application_id):
     application = check_application_exist_by_id(application_id=application_id, raise_exist=False)
     env_name = get_env_name(env_id=application["env_id"])
-    application["namespace_name"] = env_name
+    application["env_name"] = env_name
     return jsonify({"data": application}), 200
 
 
@@ -62,10 +62,8 @@ class Applications(views.MethodView):
     @check_date(schema=create_app_validate)
     def post(self):
         data = request.json
-        check_namespaces_exist_by_id(id=data["namespace_id"], raise_exist=False)
         check_env_exist_by_id(env_id=data["env_id"], raise_exist=False)
         env = envs_db.envs.find_one({"_id": data["env_id"]})
-        check_namespce_exist_env(namespace_id=data["namespace_id"], env_name=env["name"], raise_exist=False)
         check_env_exist_application(env_id=data["env_id"], application_name=data["name"])
         env_id = create_application(data)
         return jsonify({"code": 201, "message": f"{env_id}创建成功"}), 201

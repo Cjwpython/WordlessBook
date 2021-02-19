@@ -4,10 +4,9 @@ create_app_validate = {
     "type": "object", "properties": {
         "name": {"type": "string"},
         "nick_name": {"type": "string"},
-        "namespace_id": {"type": "string"},
         "env_id": {"type": "string"}
     },
-    "required": ["name", "nick_name", "namespace_id", "env_id"],
+    "required": ["name", "nick_name", "env_id"],
     "additionalProperties": True
 }
 

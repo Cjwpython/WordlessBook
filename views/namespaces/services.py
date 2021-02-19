@@ -55,7 +55,6 @@ def delete_namespace(data):
 
 
 def get_namespace_name(namespace_id):
-    print(namespace_id)
     namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
     return namespace["name"]
 
