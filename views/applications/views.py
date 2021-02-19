@@ -8,7 +8,7 @@ from middleware.validate import check_date
 from utils.db import envs_db, apps_db
 import logging
 
-from views.applications.services import create_application, check_env_exist_application, check_application_exist_by_id, env_delete_application, update_application_env_id, env_add_application
+from views.applications.services import create_application, check_env_exist_application, check_application_exist_by_id, env_delete_application, update_application_env_id, env_add_application, check_env_exist_application_by_id
 from views.applications.validate import create_app_validate, update_application_validate, delete_application_validate, application_change_env_validate
 from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, get_env_name
 from views.namespaces.services import check_namespaces_exist_by_id
@@ -96,9 +96,8 @@ def application_change_env():
     current_env_id = data["current_env_id"]
     check_env_exist_by_id(env_id=env_id, raise_exist=False)
     check_env_exist_by_id(env_id=current_env_id, raise_exist=False)
-    application = check_application_exist_by_id(application_id=env_id, raise_exist=False)
-    application_name = application["name"]
-    check_env_exist_application(env_id=env_id, application_name=application_name)
+    check_application_exist_by_id(application_id=env_id, raise_exist=False)
+    check_env_exist_application_by_id(env_id=env_id, application_id=application_id)
     env_delete_application(env_id=current_env_id, application_id=application_id)
     update_application_env_id(application_id=application_id, env_id=env_id)
     env_add_application(env_id=env_id, application_id=application_id)

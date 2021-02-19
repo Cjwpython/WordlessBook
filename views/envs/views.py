@@ -8,7 +8,7 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, serialize_application_data, delete_env, namespace_add_env
+from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, serialize_application_data, delete_env, namespace_add_env, check_namespce_exist_env_by_id
 from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, env_change_namespace_validate
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
@@ -93,9 +93,7 @@ def env_change_namespcae():
     check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
     check_namespaces_exist_by_id(id=current_namespace_id, raise_exist=False)
     check_env_exist_by_id(env_id=env_id, raise_exist=False)
-    env = envs_db.envs.find_one({"_id": env_id})
-    env_name = env["name"]
-    check_namespce_exist_env(namespace_id=namespace_id, env_name=env_name)
+    check_namespce_exist_env_by_id(namespace_id=namespace_id, env_id=env_id)
     namespace_delete_env(namespace_id=current_namespace_id, env_id=env_id)
     update_env_namespace_id(env_id, namespace_id=namespace_id)
     namespace_add_env(namespace_id=namespace_id, env_id=env_id)

@@ -50,6 +50,11 @@ def check_env_exist_application(env_id, application_name, raise_exist=True):
         if env_id == app["env_id"] and raise_exist:
             raise ApplicationExist
 
+def check_env_exist_application_by_id(env_id, application_id):
+    env = envs_db.envs.find_one({"_id": env_id})
+    if application_id in env["apps"]:
+        raise ApplicationExist
+
 
 def delete_application(appliction_id):
     apps_db.apps.delete_one({"_id": appliction_id})

@@ -45,6 +45,12 @@ def check_namespce_exist_env(namespace_id, env_name, raise_exist=True):
             raise NameSpaceExistEnv
 
 
+def check_namespce_exist_env_by_id(namespace_id, env_id):
+    namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
+    if env_id in namespace["envs"]:
+        raise NameSpaceExistEnv
+
+
 def check_env_exist_by_id(env_id, raise_exist=True):
     env = envs_db.envs.find_one({"_id": env_id})
     if env and raise_exist:
