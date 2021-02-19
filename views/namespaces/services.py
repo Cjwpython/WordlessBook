@@ -78,9 +78,6 @@ def namespace_delete_env(namespace_id=None, env_id=None):
     namespaces_db.namespaces.update({"_id": namespace_id}, {"$set": {"envs": envs, "update_time": now_time}}, upsert=True)
 
 
-
-
-
 if __name__ == '__main__':
     namespace_id = "f9f4a5fa-d348-469c-a977-02be776db4b3"
     env_id = "eae02b0e-7104-47e4-8c7b-efc4f8ea3b95"

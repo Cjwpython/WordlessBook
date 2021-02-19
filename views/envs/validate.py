@@ -27,7 +27,7 @@ delete_env_validate = {
     "additionalProperties": False
 }
 
-change_env_namespace_validate = {
+env_change_namespace_validate = {
     "type": "object", "properties": {
         "env_id": {"type": "string"},
         "namespace_id": {"type": "string"},

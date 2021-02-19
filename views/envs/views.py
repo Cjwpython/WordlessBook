@@ -9,7 +9,7 @@ from utils.db import envs_db
 import logging
 
 from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, serialize_application_data, delete_env, namespace_add_env
-from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, change_env_namespace_validate
+from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, env_change_namespace_validate
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
 logging.getLogger("test.views")
@@ -80,13 +80,11 @@ class Env(views.MethodView):
         env_id = data["env_id"]
         env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
         delete_env(env_id=env_id)
-        envs_db.envs.delete_one({"_id": env_id})
-        # 命名空间删除环境
         namespace_delete_env(namespace_id=env["namespace_id"], env_id=env_id)
         return jsonify({"code": 200, "message": "删除成功"}), 200
 
 
-@check_date(schema=change_env_namespace_validate)
+@check_date(schema=env_change_namespace_validate)
 def env_change_namespcae():
     data = request.json
     env_id = data["env_id"]

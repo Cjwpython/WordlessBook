@@ -64,3 +64,12 @@ def env_delete_application(env_id=None, application_id=None):
     except Exception as e:
         pass
     envs_db.envs.update({"_id": env_id}, {"$set": {"apps": apps, "update_time": now_time}}, upsert=True)
+
+
+def update_application_env_id(application_id, env_id):
+    now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    apps_db.apps.update(
+        {"_id": application_id},
+        {
+            "$set": {"update_time": now_time, "env_id": env_id}}
+    )

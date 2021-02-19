@@ -26,3 +26,12 @@ delete_application_validate = {
     "required": ["application_id"],
     "additionalProperties": False
 }
+application_change_env_validate = {
+    "type": "object", "properties": {
+        "env_id": {"type": "string"},
+        "application_id": {"type": "string"},
+        "current_env_id": {"type": "string"},
+    },
+    "required": ["env_id", "application_id", "current_env_id"],
+    "additionalProperties": False
+}
