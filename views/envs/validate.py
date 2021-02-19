@@ -26,3 +26,13 @@ delete_env_validate = {
     "required": ["env_id"],
     "additionalProperties": False
 }
+
+change_env_namespace_validate = {
+    "type": "object", "properties": {
+        "env_id": {"type": "string"},
+        "namespace_id": {"type": "string"},
+        "current_namespace_id": {"type": "string"},
+    },
+    "required": ["env_id", "namespace_id", "current_namespace_id"],
+    "additionalProperties": False
+}

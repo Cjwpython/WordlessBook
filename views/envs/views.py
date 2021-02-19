@@ -8,8 +8,8 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env
-from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate
+from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id
+from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, change_env_namespace_validate
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
 logging.getLogger("test.views")
@@ -31,7 +31,7 @@ def get_all_envs():
         max_count = envs_db.envs.find({"namespace_id": namespace_id}).count()
         envs = envs_db.envs.find({"namespace_id": namespace_id}, {"name": 1, "nick_name": 1, "namespace_id": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
     else:
-        max_count = envs_db.envs.find({"namespace_id": namespace_id}).count()
+        max_count = envs_db.envs.find({}).count()
         envs = envs_db.envs.find({}, {"name": 1, "nick_name": 1, "namespace_id": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
     for env in envs:
         print(env)
@@ -85,3 +85,20 @@ class Env(views.MethodView):
         # 命名空间删除环境
         namespace_delete_env(namespace_id=env["namespace_id"], env_id=env_id)
         return jsonify({"code": 200, "message": "删除成功"}), 200
+
+
+@check_date(schema=change_env_namespace_validate)
+def env_change_namespcae():
+    data = request.json
+    env_id = data["env_id"]
+    namespace_id = data["namespace_id"]
+    current_namespace_id = data["current_namespace_id"]
+    check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
+    check_namespaces_exist_by_id(id=current_namespace_id, raise_exist=False)
+    check_env_exist_by_id(env_id=env_id, raise_exist=False)
+    env = envs_db.envs.find_one({"_id": env_id})
+    env_name = env["name"]
+    check_namespce_exist_env(namespace_id=namespace_id, env_name=env_name)
+    namespace_delete_env(namespace_id=current_namespace_id, env_id=env_id)
+    update_env_namespace_id(env_id, namespace_id=namespace_id)
+    return jsonify({"code": 200, "message": "修改成功"}), 200

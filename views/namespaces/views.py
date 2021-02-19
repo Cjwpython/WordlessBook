@@ -16,21 +16,28 @@ def get_list_namespaces():
     max_count = namespaces_db.namespaces.find().count()
 
     params = request.args.to_dict(flat=True)
-    current_page = params.get("current_page", 1)
-    current_max_row = params.get("current_max_row", 15)
+    pagiation = int(params.get("pagiation", 1))
     sort_type = params.get("sort_type", "update_time")
-    skip = (int(current_page) - 1) * int(current_max_row)
     if sort_type not in ["create_time", "update_time"]:
         sort_type = "update_time"
-    namespaces = namespaces_db.namespaces.find(
-        {},
-        {"name": 1, "nick_name": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
+    if pagiation:  # 开启分页
+        current_page = int(params.get("current_page", 1))
+        current_max_row = int(params.get("current_max_row", 15))
+        skip = (current_page - 1) * int(current_max_row)
+        namespaces = namespaces_db.namespaces.find(
+            {},
+            {"name": 1, "nick_name": 1}).sort(sort_type, -1).skip(skip).limit(current_max_row)  # 只返回名称和昵称
+    else:
+        namespaces = namespaces_db.namespaces.find(
+            {},
+            {"name": 1, "nick_name": 1}).sort(sort_type, -1)
     for namespace in namespaces:
         data["namespaces"].append(namespace)
-    data["max_count"] = max_count
-    data["current_page"] = current_page
-    data["current_max_row"] = current_max_row
-    data["sort_type"] = sort_type
+    if pagiation:  # 开启分页
+        data["max_count"] = max_count
+        data["current_page"] = current_page
+        data["current_max_row"] = current_max_row
+        data["sort_type"] = sort_type
     return jsonify({"data": data, "status_code": 200}), 200
 
 

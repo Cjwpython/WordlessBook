@@ -18,13 +18,7 @@ def create_env(data):
         "update_time": now_time,
     }
     envs_db.envs.insert_one(env)
-    # namespace中插入数据
-    namespaces_db.namespaces.update(
-        {"_id": data["namespace_id"]},
-        {
-            "$addToSet": {"envs": env["_id"]},
-            "$set": {"update_time": now_time}}
-    )
+    namespace_add_env(namespace_id=data["namespace_id"], env_id=env["_id"])
     return env["_id"]
 
 
@@ -47,5 +41,24 @@ def check_env_exist_by_id(env_id, raise_exist=True):
         raise EnvNotExist
 
 
+def namespace_add_env(namespace_id=None, env_id=None):
+    now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    namespaces_db.namespaces.update(
+        {"_id": namespace_id},
+        {
+            "$addToSet": {"envs": env_id},
+            "$set": {"update_time": now_time}}
+    )
+
+
 def delete_env(env_id):
-    env = envs_db.envs.delete_one({"_id": env_id})
+    envs_db.envs.delete_one({"_id": env_id})
+
+
+def update_env_namespace_id(env_id, namespace_id):
+    now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    envs_db.envs.update(
+        {"_id": env_id},
+        {
+            "$set": {"update_time": now_time,"namespace_id": namespace_id}}
+    )

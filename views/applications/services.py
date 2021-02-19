@@ -18,15 +18,15 @@ def create_env(data):
         "create_time": now_time,
         "update_time": now_time,
     }
-    envs_db.envs.insert_one(env)
+    envs_db.envs.insert_one(init)
     # namespace中插入数据
     namespaces_db.namespaces.update(
         {"_id": data["namespace_id"]},
         {
-            "$addToSet": {"envs": env},
+            "$addToSet": {"envs": init},
             "$set": {"update_time": now_time}}
     )
-    return env["_id"]
+    return init["_id"]
 
 
 def check_namespce_exist_env(namespace_id, env_name):
