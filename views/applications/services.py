@@ -55,7 +55,9 @@ def env_delete_application(env_id=None, application_id=None):
     now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     env = envs_db.envs.find_one({"_id": env_id})
     apps = env.pop("apps")
-    for app in apps:
-        if app == application_id:
-            apps.remove(app)
-    envs_db.envs.update({"_id": env_id}, {"$set": {"envs": apps, "update_time": now_time}}, upsert=True)
+    try:
+        apps.remove(application_id)
+    except Exception as e:
+        pass
+    envs_db.envs.update({"_id": env_id}, {"$set": {"apps": apps, "update_time": now_time}}, upsert=True)
+

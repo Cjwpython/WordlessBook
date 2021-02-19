@@ -36,6 +36,7 @@ def check_namespaces_exist_by_id(id, raise_exist=True):
         raise NamespaceExist
     if not namespace and not raise_exist:
         raise NamespaceNotExist
+    return namespace
 
 
 def update_namespace(data):

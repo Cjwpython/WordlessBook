@@ -8,7 +8,7 @@ from middleware.validate import check_date
 from utils.db import envs_db
 import logging
 
-from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, namespace_add_new_env
+from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env, update_env_namespace_id, namespace_add_new_env, serialize_application_data
 from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate, change_env_namespace_validate
 from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
@@ -17,6 +17,7 @@ logging.getLogger("test.views")
 
 def get_all_envs():
     params = request.args.to_dict(flat=True)
+    pagiation = int(params.get("pagiation", 1))
     namespace_id = params.get("namespace_id", None)
     data = {}
     data["envs"] = []
@@ -33,22 +34,25 @@ def get_all_envs():
     else:
         max_count = envs_db.envs.find({}).count()
         envs = envs_db.envs.find({}, {"name": 1, "nick_name": 1, "namespace_id": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
+    if not pagiation:
+        envs = envs_db.envs.find({}, {"name": 1, "nick_name": 1, "namespace_id": 1}).sort(sort_type, -1)  # 只返回名称和昵称
+        if namespace_id:
+            envs = envs_db.envs.find({"namespace": namespace_id}, {"name": 1, "nick_name": 1, "namespace_id": 1}).sort(sort_type, -1)  # 只返回名称和昵称
     for env in envs:
-        print(env)
         namespace_name = get_namespace_name(namespace_id=env["namespace_id"])
         env["namespace_name"] = namespace_name
         data["envs"].append(env)
-    data["max_count"] = max_count
-    data["current_page"] = current_page
-    data["current_max_row"] = current_max_row
-    data["sort_type"] = sort_type
+    if pagiation:
+        data["max_count"] = max_count
+        data["current_page"] = current_page
+        data["current_max_row"] = current_max_row
+        data["sort_type"] = sort_type
     return jsonify({"data": data}), 200
 
 
 def get_single_env(env_id):
     env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
-    namespace_name = get_namespace_name(namespace_id=env["namespace_id"])
-    env["namespace_name"] = namespace_name
+    env = serialize_application_data(env=env)
     return jsonify({"data": env}), 200
 
 

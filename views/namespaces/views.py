@@ -42,8 +42,7 @@ def get_list_namespaces():
 
 
 def get_single_namespace(namespace_id):
-    check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
-    namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
+    namespace = check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
     namespace = serialize_env_data(namespace)
     return jsonify({"data": namespace, "status_code": 200}), 200
 

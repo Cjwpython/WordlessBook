@@ -2,7 +2,7 @@
 import datetime
 import uuid
 
-from utils.db import envs_db, namespaces_db
+from utils.db import envs_db, namespaces_db, apps_db
 from utils.errors import EnvExist, NameSpaceExistEnv, EnvNotExist
 
 
@@ -71,3 +71,13 @@ def update_env_namespace_id(env_id, namespace_id):
 def get_env_name(env_id):
     env = envs_db.envs.find_one({"_id": env_id})
     return env["name"]
+
+def serialize_application_data(env):
+    app_ids = env.pop("apps")
+    env["apps"] = []
+    for app_id in app_ids:
+        app = apps_db.apps.find_one({"_id": app_id})
+        env["apps"].append(app)
+    return env
+
+

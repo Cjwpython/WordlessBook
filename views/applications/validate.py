@@ -20,10 +20,10 @@ update_application_validate = {
     "additionalProperties": False
 }
 
-delete_env_validate = {
+delete_application_validate = {
     "type": "object", "properties": {
-        "env_id": {"type": "string"}
+        "application_id": {"type": "string"}
     },
-    "required": ["env_id"],
+    "required": ["application_id"],
     "additionalProperties": False
 }
