@@ -35,3 +35,11 @@ application_change_env_validate = {
     "required": ["env_id", "application_id", "current_env_id"],
     "additionalProperties": False
 }
+
+create_config_validate = {
+    "type": "object", "properties": {
+        "configs": {"type": "array"}
+    },
+    "required": ["configs"],
+    "additionalProperties": False
+}

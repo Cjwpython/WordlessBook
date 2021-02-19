@@ -71,9 +71,20 @@ class ApplicationExist(BaseError):
         if error_msg:
             self.error_msg = error_msg
 
+
 class ApplicationNotExist(BaseError):
     error_id = "APPLICATION_ERROR"
     error_message = "应用不存在"
+    status_code = 400
+
+    def __init__(self, error_msg=None):
+        if error_msg:
+            self.error_msg = error_msg
+
+
+class ConfigTypeError(BaseError):
+    error_id = "CONFIG_ERROR"
+    error_message = "配置参数格式错误"
     status_code = 400
 
     def __init__(self, error_msg=None):

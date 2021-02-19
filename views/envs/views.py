@@ -47,13 +47,13 @@ def get_all_envs():
         data["current_page"] = current_page
         data["current_max_row"] = current_max_row
         data["sort_type"] = sort_type
-    return jsonify({"data": data}), 200
+    return jsonify({"data": data, "status_code": 200}), 200
 
 
 def get_single_env(env_id):
     env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
     env = serialize_application_data(env=env)
-    return jsonify({"data": env}), 200
+    return jsonify({"data": env, "status_code": 200}), 200
 
 
 class Env(views.MethodView):

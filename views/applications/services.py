@@ -3,7 +3,7 @@ import datetime
 import uuid
 
 from utils.db import envs_db, apps_db
-from utils.errors import ApplicationExist, ApplicationNotExist
+from utils.errors import ApplicationExist, ApplicationNotExist, ConfigTypeError
 
 
 def create_application(data):
@@ -16,6 +16,7 @@ def create_application(data):
         "env_id": data["env_id"],
         "create_time": now_time,
         "update_time": now_time,
+        "configs": {}
     }
     apps_db.apps.insert_one(app)
     # env中插入数据
@@ -50,6 +51,7 @@ def check_env_exist_application(env_id, application_name, raise_exist=True):
         if env_id == app["env_id"] and raise_exist:
             raise ApplicationExist
 
+
 def check_env_exist_application_by_id(env_id, application_id):
     env = envs_db.envs.find_one({"_id": env_id})
     if application_id in env["apps"]:
@@ -77,4 +79,65 @@ def update_application_env_id(application_id, env_id):
         {"_id": application_id},
         {
             "$set": {"update_time": now_time, "env_id": env_id}}
+    )
+
+
+def update_application_configs(application_id=None, configs=None):
+    now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    """
+    configs = [
+    {
+        "key": "123",
+        "value": 123,
+        "type": "int"
+    },
+    {
+        "key": "234",
+        "value": 0.99,
+        "type": "float"
+    },
+    {
+        "key": "mongourl",
+        "value": "10.0.81.9",
+        "type": "str"
+    },
+    {
+        "key": "list",
+        "value": [1, 2, 3],
+        "type": "list"
+    },
+    {
+        "key": "dict",
+        "value": {1: 2, 3: 4},
+        "type": "dict"
+    }
+]
+    """
+    data = {}
+    for config in configs:
+        key = config["key"]
+        value = config["value"]
+        type = config["type"]
+        if type == "int":
+            if not isinstance(value, int):
+                raise ConfigTypeError(f"{key}的格式非{type}")
+        elif type == "list":
+            if not isinstance(value, list):
+                raise ConfigTypeError(f"{key}的格式非{type}")
+        elif type == "float":
+            if not isinstance(value, float):
+                raise ConfigTypeError(f"{key}的格式非{type}")
+        elif type == "dict":
+            if not isinstance(value, dict):
+                raise ConfigTypeError(f"{key}的格式非{type}")
+        elif type == "str":
+            if not isinstance(value, str):
+                raise ConfigTypeError(f"{key}的格式非{type}")
+        else:
+            raise ConfigTypeError(f"{key}的格式{type}，不在默认格式中")
+        data[key] = value
+    apps_db.apps.update(
+        {"_id": application_id},
+        {
+            "$set": {"update_time": now_time, "configs": data}}
     )
