@@ -10,7 +10,7 @@ import logging
 
 from views.envs.services import check_namespce_exist_env, check_env_exist_by_id, create_env
 from views.envs.validate import create_env_validate, update_env_validate, delete_env_validate
-from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name
+from views.namespaces.services import check_namespaces_exist_by_id, get_namespace_name, namespace_delete_env
 
 logging.getLogger("test.views")
 
@@ -64,8 +64,9 @@ class Env(views.MethodView):
 
     @check_date(schema=update_env_validate)
     def put(self):
-        env_id = request.json.get("env_id")
-        nick_name = request.json.get("nick_name")
+        data = request.json
+        env_id = data["env_id"]
+        nick_name = data["nick_name"]
         check_env_exist_by_id(env_id=env_id, raise_exist=False)
         env = envs_db.envs.find_one({"_id": env_id})
         if not env:
@@ -75,9 +76,12 @@ class Env(views.MethodView):
 
     @check_date(schema=delete_env_validate)
     def delete(self):
-        env_id = request.json.get("env_id")
+        data = request.json
+        env_id = data["env_id"]
         env = envs_db.envs.find_one({"_id": env_id})
         if not env:
             return jsonify({"code": 400, "message": "环境不存在"}), 400
         envs_db.envs.delete_one({"_id": env_id})
+        # 命名空间删除环境
+        namespace_delete_env(namespace_id=env["namespace_id"], env_id=env_id)
         return jsonify({"code": 200, "message": "删除成功"}), 200

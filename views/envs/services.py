@@ -22,7 +22,7 @@ def create_env(data):
     namespaces_db.namespaces.update(
         {"_id": data["namespace_id"]},
         {
-            "$addToSet": {"envs": env},
+            "$addToSet": {"envs": env["_id"]},
             "$set": {"update_time": now_time}}
     )
     return env["_id"]

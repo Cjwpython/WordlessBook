@@ -4,7 +4,7 @@ from middleware.validate import check_date
 from utils.db import namespaces_db
 import logging
 
-from views.namespaces.services import create_namespace, update_namespace, check_namespaces_exist_by_name, check_namespaces_exist_by_id, delete_namespace
+from views.namespaces.services import create_namespace, update_namespace, check_namespaces_exist_by_name, check_namespaces_exist_by_id, delete_namespace, serialize_env_data
 from views.namespaces.validate import create_namespace_validate, update_namespace_validate, delete_namespace_validate
 
 logging.getLogger("test.views")
@@ -37,6 +37,7 @@ def get_list_namespaces():
 def get_single_namespace(namespace_id):
     check_namespaces_exist_by_id(id=namespace_id, raise_exist=False)
     namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})
+    namespace = serialize_env_data(namespace)
     return jsonify({"data": namespace, "status_code": 200}), 200
 
 
