@@ -9,11 +9,14 @@ from utils.errors import EnvExist, NameSpaceExistEnv, EnvNotExist
 def create_env(data):
     now_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     # 创建一个环境
-    env = {
+    init = {
         "_id": str(uuid.uuid4()),
         "name": data["name"],
         "nick_name": data["nick_name"],
-        "namespace_id": data["namespace_id"]
+        "namespace_id": data["namespace_id"],
+        "env_id": data["env_id"],
+        "create_time": now_time,
+        "update_time": now_time,
     }
     envs_db.envs.insert_one(env)
     # namespace中插入数据

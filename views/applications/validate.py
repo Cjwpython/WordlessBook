@@ -1,13 +1,14 @@
 # coding: utf-8
 
-create_env_validate = {
+create_app_validate = {
     "type": "object", "properties": {
         "name": {"type": "string"},
         "nick_name": {"type": "string"},
-        "namespace_id": {"type": "string"}
+        "namespace_id": {"type": "string"},
+        "env_id": {"type": "string"}
     },
-    "required": ["name", "nick_name", "namespace_id"],
-    "additionalProperties": False  # 不接受规定以外的数个传入，True 除了必传的参数外，接受其他参数的传入
+    "required": ["name", "nick_name", "namespace_id", "env_id"],
+    "additionalProperties": True
 }
 
 update_env_validate = {
