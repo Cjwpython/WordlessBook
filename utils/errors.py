@@ -60,3 +60,22 @@ class EnvNotExist(BaseError):
     def __init__(self, error_msg=None):
         if error_msg:
             self.error_msg = error_msg
+
+
+class ApplicationExist(BaseError):
+    error_id = "APPLICATION_ERROR"
+    error_message = "应用已经存在"
+    status_code = 400
+
+    def __init__(self, error_msg=None):
+        if error_msg:
+            self.error_msg = error_msg
+
+class ApplicationNotExist(BaseError):
+    error_id = "APPLICATION_ERROR"
+    error_message = "应用不存在"
+    status_code = 400
+
+    def __init__(self, error_msg=None):
+        if error_msg:
+            self.error_msg = error_msg

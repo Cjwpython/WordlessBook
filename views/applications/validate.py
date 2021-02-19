@@ -11,12 +11,12 @@ create_app_validate = {
     "additionalProperties": True
 }
 
-update_env_validate = {
+update_application_validate = {
     "type": "object", "properties": {
-        "env_id": {"type": "string"},
+        "application_id": {"type": "string"},
         "nick_name": {"type": "string"}
     },
-    "required": ["env_id", "nick_name"],
+    "required": ["application_id", "nick_name"],
     "additionalProperties": False
 }
 

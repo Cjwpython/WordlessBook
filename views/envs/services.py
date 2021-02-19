@@ -39,6 +39,7 @@ def check_env_exist_by_id(env_id, raise_exist=True):
         raise EnvExist
     if not env and not raise_exist:
         raise EnvNotExist
+    return env
 
 
 def namespace_add_env(namespace_id=None, env_id=None):
@@ -66,3 +67,7 @@ def update_env_namespace_id(env_id, namespace_id):
         {
             "$set": {"update_time": now_time, "namespace_id": namespace_id}}
     )
+
+def get_env_name(env_id):
+    env = envs_db.envs.find_one({"_id": env_id})
+    return env["name"]

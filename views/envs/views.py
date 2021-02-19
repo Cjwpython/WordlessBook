@@ -46,8 +46,7 @@ def get_all_envs():
 
 
 def get_single_env(env_id):
-    check_env_exist_by_id(env_id=env_id, raise_exist=False)
-    env = envs_db.envs.find_one({"_id": env_id})
+    env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
     namespace_name = get_namespace_name(namespace_id=env["namespace_id"])
     env["namespace_name"] = namespace_name
     return jsonify({"data": env}), 200
@@ -68,9 +67,6 @@ class Env(views.MethodView):
         env_id = data["env_id"]
         nick_name = data["nick_name"]
         check_env_exist_by_id(env_id=env_id, raise_exist=False)
-        env = envs_db.envs.find_one({"_id": env_id})
-        if not env:
-            return jsonify({"code": 400, "message": "环境不存在"}), 400
         envs_db.envs.update({"_id": env_id}, {"$set": {"nick_name": nick_name}})
         return jsonify({"code": 200, "message": "更新成功"}), 200
 
@@ -78,9 +74,7 @@ class Env(views.MethodView):
     def delete(self):
         data = request.json
         env_id = data["env_id"]
-        env = envs_db.envs.find_one({"_id": env_id})
-        if not env:
-            return jsonify({"code": 400, "message": "环境不存在"}), 400
+        env = check_env_exist_by_id(env_id=env_id, raise_exist=False)
         envs_db.envs.delete_one({"_id": env_id})
         # 命名空间删除环境
         namespace_delete_env(namespace_id=env["namespace_id"], env_id=env_id)
