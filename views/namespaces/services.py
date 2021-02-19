@@ -48,8 +48,8 @@ def update_namespace(data):
 def delete_namespace(data):
     namespace_id = data["namespace_id"]
     namespace = namespaces_db.namespaces.find_one({"_id": namespace_id})  # 获取所有的环境
-    for env in namespace["envs"]:
-        delete_env(env["_id"])  # 删除所有的环境
+    for env_id in namespace["envs"]:
+        delete_env(env_id)  # 删除所有的环境
     namespaces_db.namespaces.delete_one({"_id": namespace_id})
 
 
