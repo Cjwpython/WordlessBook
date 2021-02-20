@@ -105,7 +105,7 @@ def application_change_env():
     current_env_id = data["current_env_id"]
     check_env_exist_by_id(env_id=env_id, raise_exist=False)
     check_env_exist_by_id(env_id=current_env_id, raise_exist=False)
-    application = check_application_exist_by_id(application_id=env_id, raise_exist=False)
+    application = check_application_exist_by_id(application_id=application_id, raise_exist=False)
     check_env_exist_application_by_id(env_id=env_id, application_id=application_id,application_name=application["name"])
     env_delete_application(env_id=current_env_id, application_id=application_id)
     update_application_env_id(application_id=application_id, env_id=env_id)
