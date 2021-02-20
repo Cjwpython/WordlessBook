@@ -34,7 +34,7 @@ def get_all_applications():
         max_count = apps_db.apps.find({"env_id": env_id}).count()
         apps = apps_db.apps.find({"env_id": env_id}, {"name": 1, "nick_name": 1, "env_id": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
     else:
-        max_count = envs_db.envs.find({}).count()
+        max_count = apps_db.apps.find({}).count()
         apps = apps_db.apps.find({}, {"name": 1, "nick_name": 1, "env_id": 1}).sort(sort_type, -1).skip(int(skip)).limit(int(current_max_row))  # 只返回名称和昵称
     if not pagiation:
         apps = apps_db.apps.find({}, {"name": 1, "nick_name": 1, "env_id": 1}).sort(sort_type, -1)  # 只返回名称和昵称
