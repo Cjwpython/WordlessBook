@@ -42,7 +42,7 @@ def get_all_applications():
             apps = apps_db.apps.find({"env_id": env_id}, {"name": 1, "nick_name": 1, "env_id": 1}).sort(sort_type, -1)  # 只返回名称和昵称
     for app in apps:
         env_name = get_env_name(env_id=app["env_id"])
-        app["namespace_name"] = env_name
+        app["env_name"] = env_name
         data["apps"].append(app)
     if pagiation:
         data["max_count"] = max_count
